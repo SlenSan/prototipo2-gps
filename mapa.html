@@ -43,7 +43,7 @@
   let marcadorFin = null;
 
   function cargarRecorrido() {
-    fetch('https://web-production-83993.up.railway.app')
+    fetch('https://web-production-83993.up.railway.app/ultimo_recorrido')
       .then(res => res.json())
       .then(puntos => {
         if (puntos.length === 0) {
