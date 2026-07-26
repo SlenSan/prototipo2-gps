@@ -26,7 +26,7 @@
 </head>
 <body>
 
-<div id="encabezado"> Rastreo de Paseo Canino</div>
+<div id="encabezado">🐾 Rastreo de Paseo Canino</div>
 <div id="info">Cargando recorrido...</div>
 <div id="mapa"></div>
 
@@ -41,6 +41,7 @@
   let rutaLinea = null;
   let marcadorInicio = null;
   let marcadorFin = null;
+  let marcadoresPuntos = [];
 
   function cargarRecorrido() {
     fetch('https://web-production-83993.up.railway.app/ultimo_recorrido')
@@ -55,12 +56,25 @@
         if (rutaLinea) mapa.removeLayer(rutaLinea);
         if (marcadorInicio) mapa.removeLayer(marcadorInicio);
         if (marcadorFin) mapa.removeLayer(marcadorFin);
+        marcadoresPuntos.forEach(m => mapa.removeLayer(m));
+        marcadoresPuntos = [];
 
         // Construir coordenadas
         const coords = puntos.map(p => [p.latitud, p.longitud]);
 
         // Dibujar línea
         rutaLinea = L.polyline(coords, { color: '#3b82f6', weight: 4 }).addTo(mapa);
+
+        // Marcador en cada punto
+        coords.forEach((coord, i) => {
+          const m = L.circleMarker(coord, {
+            radius: 4,
+            color: '#3b82f6',
+            fillColor: '#3b82f6',
+            fillOpacity: 1
+          }).addTo(mapa).bindPopup(`Punto ${i+1}: ${puntos[i].hora}`);
+          marcadoresPuntos.push(m);
+        });
 
         // Marcador inicio
         marcadorInicio = L.marker(coords[0])
@@ -84,7 +98,6 @@
       });
   }
 
-  // Cargar al abrir y cada 5 segundos
   cargarRecorrido();
   setInterval(cargarRecorrido, 5000);
 </script>
